@@ -1,16 +1,16 @@
-import { setStatsValues, extendStats, rollDice } from "../stats";
+import { setStatsValues, extendStats, rollDice } from '../stats';
 
 const baseAttributes = [
-  { key: "WS", name: "Weapon Skill" },
-  { key: "BS", name: "Ballistic Skill" },
-  { key: "S", name: "Strength" },
-  { key: "T", name: "Toughness" },
-  { key: "I", name: "Initiative" },
-  { key: "AG", name: "Agility" },
-  { key: "DEX", name: "Dexterity" },
-  { key: "INT", name: "Intelligence" },
-  { key: "WP", name: "Willpower" },
-  { key: "FEL", name: "Fellowship" },
+  { key: 'WS', name: 'Weapon Skill' },
+  { key: 'BS', name: 'Ballistic Skill' },
+  { key: 'S', name: 'Strength' },
+  { key: 'T', name: 'Toughness' },
+  { key: 'I', name: 'Initiative' },
+  { key: 'AG', name: 'Agility' },
+  { key: 'DEX', name: 'Dexterity' },
+  { key: 'INT', name: 'Intelligence' },
+  { key: 'WP', name: 'Willpower' },
+  { key: 'FEL', name: 'Fellowship' },
 ];
 
 const _humanBase = {
@@ -49,13 +49,11 @@ const _halflingBase = {
 };
 
 function rollStat(stats, stat) {
-  return setStatsValues(stats, { [stat]: { rolledValue: rollDice("2d10").sum } });
+  return setStatsValues(stats, { [stat]: { rolledValue: rollDice('2d10').sum } });
 }
 
 function rollAllStats(stats) {
-  return stats.map((stat) => {
-    return { ...stat, rolledValue: rollDice("2d10").sum };
-  });
+  return stats.map((stat) => ({ ...stat, rolledValue: rollDice('2d10').sum }));
 }
 
 function getCurrentValue(stat) {
@@ -63,9 +61,7 @@ function getCurrentValue(stat) {
 }
 
 function calculateCurrent(stats) {
-  return stats.map((stat) => {
-    return { ...stat, currentValue: getCurrentValue(stat) };
-  });
+  return stats.map((stat) => ({ ...stat, currentValue: getCurrentValue(stat) }));
 }
 
 const extendedAttributes = extendStats(baseAttributes, {

@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import Attributes from './services/wfrp/attributes'
-import { setStatsValues } from './services/stats'
+import Attributes from './services/wfrp/attributes';
+import { setStatsValues } from './services/stats';
 
-function App() {
+function app() {
   useEffect(() => {
     let randomDwarf = Attributes.dwarfBase;
     randomDwarf = Attributes.rollAllStats(randomDwarf);
-    randomDwarf = setStatsValues(randomDwarf, { 'WS': { modifier: -20 } });
+    randomDwarf = setStatsValues(randomDwarf, { WS: { modifier: -20 } });
     randomDwarf = Attributes.calculateCurrent(randomDwarf);
     console.log(randomDwarf);
     randomDwarf = Attributes.rollStat(randomDwarf, 'WS');
@@ -20,7 +20,9 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Edit
+          <code>src/App.js</code>
+          and save to reload.
         </p>
         <a
           className="App-link"
@@ -35,4 +37,4 @@ function App() {
   );
 }
 
-export default App;
+export default app;
