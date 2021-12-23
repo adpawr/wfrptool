@@ -1,75 +1,79 @@
-const _attributes = [
-    { name: "Weapon Skill", attribute: "WS", baseValue: 0, rolledValue: 0, advancements: 0 },
-    { name: "Ballistic Skill", attribute: "BS", baseValue: 0, rolledValue: 0, advancements: 0 },
-    { name: "Strength", attribute: "S", baseValue: 0, rolledValue: 0, advancements: 0 },
-    { name: "Toughness", attribute: "T", baseValue: 0, rolledValue: 0, advancements: 0 },
-    { name: "Initiative", attribute: "I", baseValue: 0, rolledValue: 0, advancements: 0 },
-    { name: "Agility", attribute: "AG", baseValue: 0, rolledValue: 0, advancements: 0 },
-    { name: "Dexterity", attribute: "DEX", baseValue: 0, rolledValue: 0, advancements: 0 },
-    { name: "Intelligence", attribute: "INT", baseValue: 0, rolledValue: 0, advancements: 0 },
-    { name: "Willpower", attribute: "WP", baseValue: 0, rolledValue: 0, advancements: 0 },
-    { name: "Fellowhip", attribute: "FEL", baseValue: 0, rolledValue: 0, advancements: 0 },
+import { setStatsValues, extendStats, rollDices } from '../stats'
+
+const baseAttributes = [
+    { key: "WS", name: "Weapon Skill" },
+    { key: "BS", name: "Ballistic Skill" },
+    { key: "S", name: "Strength" },
+    { key: "T", name: "Toughness" },
+    { key: "I", name: "Initiative" },
+    { key: "AG", name: "Agility" },
+    { key: "DEX", name: "Dexterity" },
+    { key: "INT", name: "Intelligence" },
+    { key: "WP", name: "Willpower" },
+    { key: "FEL", name: "Fellowhip" },
 ];
 
-const currentValue = (attribute) => {
-    return attribute.baseValue + attribute.rolledValue + attribute.advancements;
+const _humanBase = {
+    'default': { baseValue: 20 },
 };
 
-const changeRolledValue = (attributes, attribute, value) => {
-    return attributes.map(attr => {
-        if(attr.attribute === attribute) {
-            return {...attr, rolledValue: value};
-        }
-        return attr;
-    })
+const _elfBase = {
+    'WS': { baseValue: 30 },
+    'BS': { baseValue: 30 },
+    'I': { baseValue: 40 },
+    'AG': { baseValue: 30 },
+    'DEX': { baseValue: 30 },
+    'INT': { baseValue: 30 },
+    'WP': { baseValue: 30 },
+    'default': { baseValue: 20 },
+};
+
+const _dwarfBase = {
+    'WP': { baseValue: 40 },
+    'WS': { baseValue: 30 },
+    'T': { baseValue: 30 },
+    'DEX': { baseValue: 30 },
+    'AG': { baseValue: 10 },
+    'FEL': { baseValue: 10 },
+    'default': { baseValue: 20 },
+};
+
+const _halflingBase = {
+    'BS': { baseValue: 30 },
+    'WP': { baseValue: 30 },
+    'DEX': { baseValue: 30 },
+    'FEL': { baseValue: 30 },
+    'WS': { baseValue: 10 },
+    'S': { baseValue: 10 },
+    'default': { baseValue: 20 },
+};
+
+function rollStat(stats, stat) {
+    return setStatsValues(stats, { [stat]: { rolledValue: rollDices('2d10').sum } });
 }
 
-const createAttributes = (race=null) => {
-    switch (race) {
-        case "dwarf":
-            return _attributes.map(attr => {
-                if (attr.attribute === 'WP') {
-                    return { ...attr, baseValue: 40 }
-                } else if (['WS', 'T', 'DEX'].indexOf(attr.attribute) !== -1) {
-                    return { ...attr, baseValue: 30 }
-                } else if (['AG', 'FEL'].indexOf(attr.attribute) !== -1) {
-                    return { ...attr, baseValue: 10 }
-                } else {
-                    return { ...attr, baseValue: 20 }
-                }
-
-            })
-        case "elf":
-            return _attributes.map(attr => {
-                if (attr.attribute === 'I') {
-                    return { ...attr, baseValue: 40 }
-                } else if (['WS', 'BS', 'AG', 'DEX', 'INT', 'WP'].indexOf(attr.attribute) !== -1) {
-                    return { ...attr, baseValue: 30 }
-                } else {
-                    return { ...attr, baseValue: 20 }
-                }
-
-            })
-        case "halfling":
-            return _attributes.map(attr => {
-                if (['BS', 'WP', 'DEX', 'FEL'].indexOf(attr.attribute) !== -1) {
-                    return { ...attr, baseValue: 30 }
-                } else if (['WS', 'S'].indexOf(attr.attribute) !== -1) {
-                    return { ...attr, baseValue: 10 }
-                } else {
-                    return { ...attr, baseValue: 20 }
-                }
-
-            })
-        case "human":
-            return _attributes.map(attr => {
-                return { ...attr, baseValue: 20 }
-            })
-        default:
-            return [ ..._attributes ];
-    }
+function rollAllStats(stats) {
+    return stats.map(stat => {
+        return { ...stat, rolledValue: rollDices('2d10').sum };
+    });
 }
 
-export default _attributes;
-export {createAttributes, currentValue, changeRolledValue};
+function getCurrentValue(stat) {
+    return stat.baseValue + stat.rolledValue + stat.advancements + stat.modifier;
+}
 
+function calculateCurrent(stats) {
+    return stats.map(stat => {
+        return { ...stat, currentValue: getCurrentValue(stat) };
+    });
+}
+
+const extendedAttributes = extendStats(baseAttributes, { rolledValue: 0, advancements: 0, modifier: 0, currentValue: 0 });
+
+const humanBase = setStatsValues(extendedAttributes, _humanBase);
+const elfBase = setStatsValues(extendedAttributes, _elfBase);
+const halflingBase = setStatsValues(extendedAttributes, _halflingBase);
+const dwarfBase = setStatsValues(extendedAttributes, _dwarfBase);
+
+const ops = { baseAttributes, extendedAttributes, humanBase, elfBase, halflingBase, dwarfBase, rollStat, rollAllStats, calculateCurrent };
+export default ops;

@@ -1,14 +1,19 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import {createAttributes, changeRolledValue, currentValue} from './services/wfrp/attributes'
+import Attributes from './services/wfrp/attributes'
+import { setStatsValues } from './services/stats'
 
 function App() {
   useEffect(() => {
-    let attributes = createAttributes('dwarf');
-    attributes = changeRolledValue(attributes, 'WP', 17)
-    console.log(currentValue(attributes.find(el=>el.attribute==='WP')));
-
+    let randomDwarf = Attributes.dwarfBase;
+    randomDwarf = Attributes.rollAllStats(randomDwarf);
+    randomDwarf = setStatsValues(randomDwarf, { 'WS': { modifier: -20 } });
+    randomDwarf = Attributes.calculateCurrent(randomDwarf);
+    console.log(randomDwarf);
+    randomDwarf = Attributes.rollStat(randomDwarf, 'WS');
+    randomDwarf = Attributes.calculateCurrent(randomDwarf);
+    console.log(randomDwarf);
   }, []);
   return (
     <div className="App">
